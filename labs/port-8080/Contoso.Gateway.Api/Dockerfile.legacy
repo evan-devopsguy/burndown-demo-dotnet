@@ -1,0 +1,14 @@
+# The same hardening applied to the old base image: aspnet:6.0 has no built-in
+# "app" user, so USER app builds fine and then fails at container start with
+# "unable to find user app". Hardening fixes don't backport blindly.
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /repo
+COPY . .
+RUN dotnet publish Contoso.Gateway.Api -c Release -o /out -f net8.0
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
+WORKDIR /app
+COPY --from=build /out .
+USER app
+EXPOSE 80
+ENTRYPOINT ["dotnet", "Contoso.Gateway.Api.dll"]

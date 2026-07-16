@@ -74,6 +74,13 @@ scripts/                     build + dual-view scan + fleet report
 .github/workflows/           per-service validation builds + fleet report summary
 ```
 
+## Labs
+
+Self-contained side scenarios for other episodes, excluded from the fleet scan:
+
+- `labs/nu1605/` — fix one CVE, break the builds: a library bumps Newtonsoft.Json and every stale per-project pin fails restore with NU1605. CI asserts the failure.
+- `labs/port-8080/` — the non-root hardening fix that failed every healthcheck: .NET 8 + `USER app` listens on 8080 while the probe checks 80, and the same `USER app` line on an aspnet:6.0 base won't start at all (`./labs/port-8080/demo.sh`).
+
 Scanner versions are pinned in `scripts/scan-image.sh` (syft v1.46.0, grype v0.115.0,
 trivy 0.72.0) so the demo reproduces; advisory databases update over time, so exact
 counts may drift while the phantom-vs-real split stays put.

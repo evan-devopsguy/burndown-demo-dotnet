@@ -34,6 +34,39 @@ jobs:
           name: scan-${{ matrix.service }}
           path: scan-results/
 
+  nu1605-lab:
+    name: NU1605 lab — restore must fail with the cascade
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Expect NU1605
+        run: |
+          set +e
+          docker run --rm -v "$PWD":/repo -w /repo/labs/nu1605 \
+            mcr.microsoft.com/dotnet/sdk:8.0 dotnet restore Contoso.Billing.Api > restore.log 2>&1
+          STATUS=$?
+          cat restore.log
+          test "$STATUS" -ne 0 && grep -q NU1605 restore.log
+
+  port8080-lab:
+    name: port-8080 lab — expect unhealthy + startup failure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hardened image goes unhealthy; legacy base won't start
+        run: |
+          cd labs/port-8080
+          docker build -q -f Contoso.Gateway.Api/Dockerfile -t gw:hardened .
+          docker run -d --name gw gw:hardened
+          sleep 25
+          STATUS=$(docker inspect -f '{{.State.Health.Status}}' gw)
+          echo "health=$STATUS"
+          docker rm -f gw
+          test "$STATUS" = "unhealthy"
+          docker build -q -f Contoso.Gateway.Api/Dockerfile.legacy -t gw:legacy .
+          if docker run --rm gw:legacy 2>err.log; then echo "legacy image unexpectedly started"; exit 1; fi
+          grep -q "unable to find user app" err.log
+
   fleet-report:
     name: fleet report
     needs: validate

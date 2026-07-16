@@ -1,0 +1,7 @@
+<Project>
+  <!-- This lab deliberately opts out of the repo's central package management:
+       the whole point is per-project pins that disagree with each other. -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+</Project>
