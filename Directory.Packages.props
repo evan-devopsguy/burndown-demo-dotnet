@@ -1,0 +1,14 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The frozen internal SDK. The platform team that owned it was disbanded; nobody bumps this. -->
+    <PackageVersion Include="Contoso.Platform.Sdk" Version="1.4.2" />
+    <!-- Pinned 2020-03 for the ledger vendor integration; "works, don't touch". -->
+    <PackageVersion Include="Newtonsoft.Json" Version="12.0.1" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,50 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: ${{ matrix.service }} — validation build + scan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [Payments, Orders, Inventory, Shipping, Notifications, Customers, Pricing, Reporting, Ledger]
+    steps:
+      - uses: actions/checkout@v4
+
+      # The validation build is the compiler. No workstation in this workflow —
+      # and no local SDK anywhere — ever builds this code.
+      - name: Validation build
+        run: |
+          LOWER=$(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]')
+          docker build -f "src/Contoso.${{ matrix.service }}.Api/Dockerfile" -t "contoso-${LOWER}-api:ci" .
+
+      - name: Scan (manifest view + shipped-DLL view)
+        run: |
+          LOWER=$(echo "${{ matrix.service }}" | tr '[:upper:]' '[:lower:]')
+          ./scripts/scan-image.sh "contoso-${LOWER}-api:ci"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: scan-${{ matrix.service }}
+          path: scan-results/
+
+  fleet-report:
+    name: fleet report
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: scan-results
+          merge-multiple: true
+
+      - name: Fleet report
+        run: python3 scripts/fleet_report.py scan-results | tee -a "$GITHUB_STEP_SUMMARY"

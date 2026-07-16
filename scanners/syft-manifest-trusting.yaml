@@ -1,0 +1,10 @@
+# Manifest-trusting SBOM config: catalog every library named in *.deps.json,
+# whether or not its DLL actually ships in the image.
+#
+# This reproduces how manifest-believing scanners (including several commercial
+# cloud-security platforms) see a .NET image. Modern syft/grype/trivy defaults
+# verify that a DLL really ships before reporting it — which is exactly the
+# phantom-findings lesson this repo demonstrates. See README.
+dotnet:
+  dep-packages-must-claim-dll: false
+  dep-packages-must-have-dll: false

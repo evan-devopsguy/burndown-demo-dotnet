@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Contoso.Platform.Sdk</PackageId>
+    <Version>1.4.2</Version>
+    <Authors>Contoso Platform Team</Authors>
+    <Company>Contoso</Company>
+    <Copyright>Copyright (c) Contoso 2019</Copyright>
+    <Description>Contoso internal platform SDK: service identity, correlation headers, and outbound HTTP conventions. Frozen at 1.4.2 (2019-11) — the platform team that owned it was disbanded, and every service pins this version.</Description>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- Frozen pre-CPM-era package: opts out of the repo's central package management. -->
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Net.Http" Version="4.3.0" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="4.5.0" />
+  </ItemGroup>
+
+</Project>
