@@ -5,3 +5,6 @@ obj/
 .idea/
 artifacts/
 scan-results/
+
+# local Claude Code settings (never commit)
+.claude/
