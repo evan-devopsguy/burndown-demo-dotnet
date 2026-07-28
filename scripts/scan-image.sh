@@ -2,8 +2,9 @@
 # Scan one built image two ways:
 #   1. manifest view  — syft configured to trust *.deps.json blindly, then grype
 #      (what a manifest-believing scanner reports)
-#   2. shipped view   — trivy with default settings, which only reports libraries
-#      whose DLLs actually ship (what is really in the image)
+#   2. shipped view   — trivy with default settings, which only reports packages
+#      the manifest's targets section records as actually deployed
+#      (what really ships in the image)
 # Results land in scan-results/<image>-manifest.json and <image>-shipped.json.
 #
 # All tools run as pinned containers; nothing is installed on the workstation.

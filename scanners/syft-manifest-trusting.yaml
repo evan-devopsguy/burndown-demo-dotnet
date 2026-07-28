@@ -2,8 +2,10 @@
 # whether or not its DLL actually ships in the image.
 #
 # This reproduces how manifest-believing scanners (including several commercial
-# cloud-security platforms) see a .NET image. Modern syft/grype/trivy defaults
-# verify that a DLL really ships before reporting it — which is exactly the
+# cloud-security platforms) see a .NET image. Modern syft defaults drop a
+# deps.json package unless the manifest's own targets section claims a runtime
+# DLL for it (dep-packages-must-claim-dll defaults to true; the actual on-disk
+# check, dep-packages-must-have-dll, defaults to false) — which is exactly the
 # phantom-findings lesson this repo demonstrates. See README.
 dotnet:
   dep-packages-must-claim-dll: false

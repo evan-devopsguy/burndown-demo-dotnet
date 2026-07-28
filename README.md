@@ -42,12 +42,18 @@ This builds all nine images and scans each one twice:
 
 The closing report shows the wall of findings on the left and the single real offender on
 the right. Interesting wrinkle: modern OSS scanners (trivy ≥0.5x, syft/grype current
-defaults) have specifically engineered this false-positive class away by verifying that a
-DLL ships before reporting it — the manifest-trusting config exists to reproduce what
-less careful scanners still report.
+defaults) have specifically engineered this false-positive class away — not by checking
+the disk, but by trusting the manifest's own `targets` section, which records the files
+actually laid down next to the app. When an assembly comes from the shared framework that
+entry is empty, so the package is dropped (syft: `dep-packages-must-claim-dll`, on by
+default; the actual on-disk check, `dep-packages-must-have-dll`, is off by default). The
+manifest-trusting config exists to reproduce what less careful scanners still report.
 
-The restore logs tell the same story from the build side: NuGet's own audit (`NU1903`/`NU1904`)
-warns about all three frozen pins on every build.
+The restore logs tell a narrower story from the build side: NuGet's audit defaults to
+direct references only (`NuGetAuditMode=direct`), so the three frozen pins — transitive
+through `Contoso.Platform.Sdk` — restore without a warning. The one `NU1903` in the fleet
+is the ledger's own direct `Newtonsoft.Json 12.0.1` pin: the audit flags exactly the one
+real finding.
 
 ## Repo conventions
 
